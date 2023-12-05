@@ -1,0 +1,2 @@
+Center: {'center_x': 22.54, 'center_y': 2.66, 'center_z': 14.99}
+Size: {'size_x': 24.57, 'size_y': 30.59, 'size_z': 21.41}
