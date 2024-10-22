@@ -248,3 +248,147 @@ def get_3D_view (receptor_file='',rec_opts={'format':'pdb'},docking_results='',r
     view.zoomTo()
     view.show()
 '''
+
+def fetchPDB(filepath=str, pdbID=str, ligID=None):
+  """
+  Fetch and save a protein and ligand from the ProteinDataBank with the specified pdbID.
+
+  Arguments
+  =========
+  filepath (str): Required. The path to a location that the fetched files will be saved.
+
+  pdbID (str): Required. String corresponding to a valid 4-character pdb code.
+
+  ligID (str): Optional. String corresponding to a valid 3-character ligand code. 
+
+   Use this to select a specific ligand in PDB files with multiple organic compounds. 
+   If None, the ligand will be defined as all non-protein organic molecules present in the pdb file. 
+
+  Returns
+  =======
+  receptor_file: A filepath for the protein corresponding to the specified pdbID.
+  
+  ligand_files: A filepaths for the ligand corresponding to the specified pdbID. 
+  """
+ 
+  #Fetch the PDB entry
+  cmd.fetch(code=pdbID,type='pdb1')
+
+  #Select and Name the protein
+  cmd.select(name='Prot',selection='polymer.protein')
+
+  #Select and name the ligand
+  if ligID is None:
+    cmd.select(name='NativeLigand',selection='organic')
+  else:
+    cmd.select(name='NativeLigand',selection=f'resn {ligID}')
+
+  #Define the file names as full paths
+  receptor_pdb=f'{filepath}{pdbID}_clean.pdb'
+  ligand_pdb=f'{filepath}{pdbID}_NativeLigand.pdb'
+  ligand_mol2=f'{filepath}{pdbID}_NativeLigand.mol2'
+
+  # Save the protein and ligand to the specified filepath
+  cmd.save(filename=receptor_pdb,format='pdb',selection='Prot')
+  cmd.save(filename=ligand_pdb,format='pdb',selection='NativeLigand')
+  cmd.save(filename=ligand_mol2,format='mol2',selection='NativeLigand')
+
+  # Clear selections
+  cmd.delete('all')
+
+  # Return the file paths
+  return(receptor_pdb,ligand_pdb,ligand_mol2)
+
+
+def split_vina_output(pdbqt_file):
+    """ 
+    Split the docking conformations in an output pdbqt file into individual files.
+
+    Arguments
+    ==========
+    pdbqt_file (str): Required. The path to the pdbqt file that will be split.
+ 
+    """
+    with open(pdbqt_file, 'r') as f:
+        lines = f.readlines()
+    name=pdbqt_file[:-6]
+    pose_separator = "MODEL"
+    current_structure = []
+    structure_count = 0
+
+    for line in lines:
+        if line.startswith(pose_separator):
+            if current_structure:
+                # Save the current structure to a separate file
+                output_filename = f"{name}_pose_{structure_count}.pdbqt"
+                with open(output_filename, 'w') as output_file:
+                    output_file.writelines(current_structure)
+                current_structure = []
+                structure_count += 1
+        current_structure.append(line)
+
+    # Save the last structure
+    if current_structure:
+        output_filename = f"structure_{structure_count}.pdbqt"
+        with open(output_filename, 'w') as output_file:
+            output_file.writelines(current_structure)
+
+
+def preview_receptor(receptor_file, ligand_file):
+  """ 
+  Display a 3D preview of a receptor and ligand.
+
+  Arguments
+  ==========
+  receptor_file (str): Required. The path to the pdb file acting as the receptor.
+
+  ligand_file (str): Required. The path to the pdb file acting as the ligand.
+  """
+  view = py3Dmol.view()
+  view.removeAllModels()
+  view.setViewStyle({'style':'outline','color':'black','width':0.1})
+
+  view.addModel(open(receptor_file,'r').read(),format='pdb')
+  Prot=view.getModel()
+  Prot.setStyle({'cartoon':{'arrows':True, 'tubes':True, 'style':'oval', 'color':'white'}})
+  view.addSurface(py3Dmol.VDW,{'opacity':0.6,'color':'white'})
+
+  view.addModel(open(ligand_file,'r').read(),format='pdb')
+  ref_m = view.getModel()
+  ref_m.setStyle({},{'stick':{'colorscheme':'greenCarbon','radius':0.2}})
+
+  view.zoomTo()
+  view.show()
+
+def calc_gridbox(receptor_file, ligand_file):
+  cmd.load(filename=receptor_file,format='pdb',object='prot')
+  cmd.load(filename=ligand_file,format='pdb',object='lig')
+
+  #Calculate the size and center of the grid box based on the position of the ligand
+  center,size=getbox(selection='lig',extending=5.0,software='vina')
+  cmd.delete('all')
+
+  print('Center:', center)
+  print('Size:', size)
+  return(center,size)
+
+def preview_gridbox(receptor_file, ligand_file, center, size ):
+  view = py3Dmol.view()
+  view.removeAllModels()
+  view.setViewStyle({'style':'outline','color':'black','width':0.1})
+
+  view.addModel(open(receptor_file,'r').read(),format='pdb')
+  Prot=view.getModel()
+  Prot.setStyle({'cartoon':{'arrows':True, 'tubes':True, 'style':'oval', 'color':'white'}})
+  view.addSurface(py3Dmol.VDW,{'opacity':0.6,'color':'white'})
+
+  view.addModel(open(ligand_file,'r').read(),format='pdb')
+  ref_m = view.getModel()
+  ref_m.setStyle({},{'stick':{'colorscheme':'greenCarbon','radius':0.2}})
+
+  view.addBox({'center':{'x':center['center_x'],'y':center['center_y'],'z':center['center_z']},
+                  'dimensions':{'w':size['size_x'],'h':size['size_y'],'d':size['size_z']},
+                  'color':'blue',
+                  'opacity': 0.6})
+  view.zoomTo()
+  view.show()
