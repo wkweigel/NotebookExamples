@@ -284,9 +284,9 @@ def fetchPDB(filepath=str, pdbID=str, ligID=None):
     cmd.select(name='NativeLigand',selection=f'resn {ligID}')
 
   #Define the file names as full paths
-  receptor_pdb=f'{filepath}{pdbID}_clean.pdb'
-  ligand_pdb=f'{filepath}{pdbID}_NativeLigand.pdb'
-  ligand_mol2=f'{filepath}{pdbID}_NativeLigand.mol2'
+  receptor_pdb=f'{filepath}/{pdbID}_clean.pdb'
+  ligand_pdb=f'{filepath}/{pdbID}_NativeLigand.pdb'
+  ligand_mol2=f'{filepath}/{pdbID}_NativeLigand.mol2'
 
   # Save the protein and ligand to the specified filepath
   cmd.save(filename=receptor_pdb,format='pdb',selection='Prot')
