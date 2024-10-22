@@ -392,3 +392,34 @@ def preview_gridbox(receptor_file, ligand_file, center, size ):
                   'opacity': 0.6})
   view.zoomTo()
   view.show()
+
+
+def preview_vina_results(receptor_file, ligand_file, vina_out_file):
+  """ 
+  Display a 3D preview of a receptor and ligand.
+
+  Arguments
+  ==========
+  receptor_file (str): Required. The path to the pdb file acting as the receptor.
+
+  ligand_file (str): Required. The path to the pdb file acting as the ligand.
+  """
+  view = py3Dmol.view()
+  view.removeAllModels()
+  view.setViewStyle({'style':'outline','color':'black','width':0.1})
+
+  view.addModel(open(receptor_file,'r').read(),format='pdb')
+  Prot=view.getModel()
+  Prot.setStyle({'cartoon':{'arrows':True, 'tubes':True, 'style':'oval', 'color':'white'}})
+  view.addSurface(py3Dmol.VDW,{'opacity':0.6,'color':'white'})
+
+  view.addModel(open(ligand_file,'r').read(),format='pdb')
+  ref_m = view.getModel()
+  ref_m.setStyle({},{'stick':{'colorscheme':'greenCarbon','radius':0.2}})
+
+  view.addModel(open(vina_out_file,'r').read(),format='sdf')
+  ref_m = view.getModel()
+  ref_m.setStyle({},{'stick':{'colorscheme':'redCarbon','radius':0.1}})
+
+  view.zoomTo()
+  view.show()
