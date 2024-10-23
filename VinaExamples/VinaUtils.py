@@ -3,7 +3,7 @@ from pymol import cmd
 from openbabel import pybel
 
 from rdkit import Chem
-from rdkit.Chem import AllChem,rdFMCS, rdMolAlign
+from rdkit.Chem import AllChem,rdFMCS, rdMolAlign, rdDistGeom
 
 from pdbfixer import PDBFixer
 from openmm.app import PDBFile
