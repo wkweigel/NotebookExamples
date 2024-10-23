@@ -463,3 +463,40 @@ def view_vina_results(receptor_file, vina_out_file, native_ligand_file=None):
 
   view.zoomTo()
   view.show()
+
+def view_vina_pose(receptor_file, vina_out_file, pose, native_ligand_file=None):
+  """ 
+  Display a 3D preview of a receptor and vina docking poses.
+
+  Arguments
+  ==========
+  receptor_file (str): Required. The path to the pdb file acting as the receptor.
+  
+  vina_out_file (str): Required. The path to the pdbqt file produced by vina after docking.
+
+  pose (int): Required. The pose that will be shown.
+  
+  native_ligand_file (str): Optional. The path to the pdb file acting as the native ligand.
+  """
+  view = py3Dmol.view()
+  view.removeAllModels()
+  view.setViewStyle({'style':'outline','color':'black','width':0.1})
+
+  view.addModel(open(receptor_file,'r').read(),format='pdb')
+  Prot=view.getModel()
+  Prot.setStyle({'cartoon':{'arrows':True, 'tubes':True, 'style':'oval', 'color':'white'}})
+  view.addSurface(py3Dmol.VDW,{'opacity':0.6,'color':'white'})
+
+  if native_ligand_file is not None:
+    view.addModel(open(native_ligand_file,'r').read(),format='pdb')
+    ref_m = view.getModel()
+    ref_m.setStyle({},{'stick':{'colorscheme':'greenCarbon','radius':0.2}})
+  
+  name=vina_out_file[:-6]
+  pose_sdf = f"{name}_pose_{pose}.sdf"
+  view.addModel(open(pose_sdf,'r').read(),format='sdf')
+  ref_m = view.getModel()
+  ref_m.setStyle({},{'stick':{'colorscheme':'redCarbon','radius':0.1}})
+
+  view.zoomTo()
+  view.show()
