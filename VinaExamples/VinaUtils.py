@@ -299,7 +299,6 @@ def fetchPDB(filepath=str, pdbID=str, ligID=None):
   # Return the file paths
   return(receptor_pdb,ligand_pdb,ligand_mol2)
 
-
 def split_vina_output(pdbqt_file):
     """ 
     Split the docking conformations in an output pdbqt file into individual files.
@@ -320,19 +319,20 @@ def split_vina_output(pdbqt_file):
         if line.startswith(pose_separator):
             if current_structure:
                 # Save the current structure to a separate file
-                output_filename = f"{name}_pose_{structure_count}.pdbqt"
-                with open(output_filename, 'w') as output_file:
+                output_pdbqt = f"{name}_pose_{structure_count}.pdbqt"
+                output_sdf = f"{name}_pose_{structure_count}.sdf"
+                with open(output_pdbqt, 'w') as output_file:
                     output_file.writelines(current_structure)
+                !mk_export.py {output_pdbqt} -o {output_sdf}
                 current_structure = []
                 structure_count += 1
         current_structure.append(line)
 
     # Save the last structure
     if current_structure:
-        output_filename = f"structure_{structure_count}.pdbqt"
-        with open(output_filename, 'w') as output_file:
+        output_pdbqt = f"structure_{structure_count}.pdbqt"
+        with open(output_pdbqt, 'w') as output_file:
             output_file.writelines(current_structure)
-
 
 def preview_receptor(receptor_file, ligand_file):
   """ 
@@ -393,16 +393,36 @@ def preview_gridbox(receptor_file, ligand_file, center, size ):
   view.zoomTo()
   view.show()
 
+def get_pose_count(pdbqt_file):
+    """ 
+    Count the docking conformations in a pdbqt file.
 
-def preview_vina_results(receptor_file, ligand_file, vina_out_file):
+    Arguments
+    ==========
+    pdbqt_file (str): Required. The path to the pdbqt file that will be split.
+ 
+    """
+    with open(pdbqt_file, 'r') as f:
+        lines = f.readlines()
+    pose_separator = "MODEL"
+    structure_count = 0
+
+    for line in lines:
+        if line.startswith(pose_separator):
+          structure_count += 1
+    return structure_count
+
+def view_vina_results(receptor_file, vina_out_file, native_ligand_file=None):
   """ 
-  Display a 3D preview of a receptor and ligand.
+  Display a 3D preview of a receptor and vina docking poses.
 
   Arguments
   ==========
   receptor_file (str): Required. The path to the pdb file acting as the receptor.
-
-  ligand_file (str): Required. The path to the pdb file acting as the ligand.
+  
+  vina_out_file (str): Required. The path to the pdbqt file produced by vina after docking.
+  
+  native_ligand_file (str): Optional. The path to the pdb file acting as the native ligand.
   """
   view = py3Dmol.view()
   view.removeAllModels()
@@ -413,13 +433,17 @@ def preview_vina_results(receptor_file, ligand_file, vina_out_file):
   Prot.setStyle({'cartoon':{'arrows':True, 'tubes':True, 'style':'oval', 'color':'white'}})
   view.addSurface(py3Dmol.VDW,{'opacity':0.6,'color':'white'})
 
-  view.addModel(open(ligand_file,'r').read(),format='pdb')
-  ref_m = view.getModel()
-  ref_m.setStyle({},{'stick':{'colorscheme':'greenCarbon','radius':0.2}})
-
-  view.addModel(open(vina_out_file,'r').read(),format='sdf')
-  ref_m = view.getModel()
-  ref_m.setStyle({},{'stick':{'colorscheme':'redCarbon','radius':0.1}})
+  if native_ligand_file is not None:
+    view.addModel(open(ligand_file,'r').read(),format='pdb')
+    ref_m = view.getModel()
+    ref_m.setStyle({},{'stick':{'colorscheme':'greenCarbon','radius':0.2}})
+  
+  name=pdbqt_file[:-6]
+  for pose in range(get_pose_count(pdbqt_file)-1):
+    pose_sdf = f"{name}_pose_{pose}.sdf"
+    view.addModel(open(pose_sdf,'r').read(),format='sdf')
+    ref_m = view.getModel()
+    ref_m.setStyle({},{'stick':{'colorscheme':'redCarbon','radius':0.1}})
 
   view.zoomTo()
   view.show()
