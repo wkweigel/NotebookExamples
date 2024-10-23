@@ -249,6 +249,21 @@ def get_3D_view (receptor_file='',rec_opts={'format':'pdb'},docking_results='',r
     view.show()
 '''
 
+def get_real_conformer(mol):
+    """
+    Generate conformers until a successful 3D conformation is generated.
+    """
+    conf_failure=0
+    comf_attempts=0
+    while conf_failure==0:
+        rdDistGeom.EmbedMolecule(mol)
+        conf_failure=mol.GetNumConformers()
+        comf_attempts+=1
+        print(str(comf_attempts) + " failed conformer generations. Reattempting...")
+        if conf_failure==1:
+            break
+    return(mol)
+
 def fetchPDB(filepath=str, pdbID=str, ligID=None):
   """
   Fetch and save a protein and ligand from the ProteinDataBank with the specified pdbID.
