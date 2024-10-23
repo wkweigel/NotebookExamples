@@ -338,7 +338,8 @@ def split_vina_output(pdbqt_file):
                 output_sdf = f"{name}_pose_{structure_count}.sdf"
                 with open(output_pdbqt, 'w') as output_file:
                     output_file.writelines(current_structure)
-                !mk_export.py {output_pdbqt} -o {output_sdf}
+                #!mk_export.py {output_pdbqt} -o {output_sdf}
+                pdbqt_to_sdf(output_pdbqt, output_sdf)
                 current_structure = []
                 structure_count += 1
         current_structure.append(line)
