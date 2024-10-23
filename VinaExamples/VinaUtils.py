@@ -450,12 +450,12 @@ def view_vina_results(receptor_file, vina_out_file, native_ligand_file=None):
   view.addSurface(py3Dmol.VDW,{'opacity':0.6,'color':'white'})
 
   if native_ligand_file is not None:
-    view.addModel(open(ligand_file,'r').read(),format='pdb')
+    view.addModel(open(native_ligand_file,'r').read(),format='pdb')
     ref_m = view.getModel()
     ref_m.setStyle({},{'stick':{'colorscheme':'greenCarbon','radius':0.2}})
   
-  name=pdbqt_file[:-6]
-  for pose in range(get_pose_count(pdbqt_file)-1):
+  name=vina_out_file[:-6]
+  for pose in range(get_pose_count(vina_out_file)-1):
     pose_sdf = f"{name}_pose_{pose}.sdf"
     view.addModel(open(pose_sdf,'r').read(),format='sdf')
     ref_m = view.getModel()
