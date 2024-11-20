@@ -205,12 +205,13 @@ class Reactions:
         return(product_smiles)
     
     def buchwald_hartwig_coupling(self, reactant1:Reactant, reactant2:Reactant):
-        #Define the reaction
-        reaction_smarts = '[Cl,Br,I][c;$(c1:[c,n]:[c,n]:[c,n]:[c,n]:[c,n]:1):1].[N;$(NC)&!$(N=*)&!$([N-])&!$(N#*)&!$([ND3])&!$([ND4])&!$(N[c,O])&!$(N[C,S]=[S,O,N]),H2&$(Nc1:[c,n]:[c,n]:[c,n]:[c,n]:[c,n]:1):2]>>[c:1][N:2]'
+        #Define the reaction 
+        reaction_smarts = '[Cl,Br,I][c:1].[N;!$(N=*)&!$(N#*)&H1,H2:2]>>[c:1][N:2]'
+        #reaction_smarts = '[Cl,Br,I][c;$(c1:[c,n]:[c,n]:[c,n]:[c,n]:[c,n]:1):1].[N;$(NC)&!$(N=*)&!$([N-])&!$(N#*)&!$([ND3])&!$([ND4])&!$(N[c,O])&!$(N[C,S]=[S,O,N]),H2&$(Nc1:[c,n]:[c,n]:[c,n]:[c,n]:[c,n]:1):2]>>[c:1][N:2]'
         reaction=AllChem.ReactionFromSmarts(reaction_smarts)
 
         #Identfy the reagents 
-        amine=self.identify_reagent(['alkyl_amine'], reactant1, reactant2)
+        amine=self.identify_reagent(['alkyl_amine', 'aryl_amine'], reactant1, reactant2)
         aryl_halide=self.identify_reagent(['aryl_halide'], reactant1, reactant2)
         
         #Create the mol objects from the reagents
