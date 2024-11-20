@@ -356,7 +356,6 @@ Nc1cncnc1
 NCCc1ccc(C(F)(F)F)cc1
 NCc1c[s]c(cc2)c1cc2Cl
 NC(CC1)CCN1c(cc1)ncc1C(N)=O
-OS(c(cc1)cc(NC2=O)c1NC2=O)(=O)=O
 Nc1cccc2ccccc12
 Cc(c(OC)cc(N)c1)c1OC
 Nc1n[n](cc(CCO)cn2)c2c1
@@ -437,7 +436,6 @@ Nc1cccc(NC(C2CCCC2)=O)c1
 CC(N=C(N1)N(CC2)CCC2N)=CC1=O
 NCOc(ccc(Cl)c1)c1Cl
 Nc1ncc[nH]1
-OS(c(cc1)cc(N2)c1NC2=O)(=O)=O
 CC(C)(C)OC(N(CC1CCN)c2c1cccc2)=O
 CC(C1=C(N2)N(C)NC1=O)=C(CCN)C2=O
 C[n](c1c2cccc1)nc2N
@@ -459,7 +457,6 @@ NCCC(N1)=Nc([s]c2c3CCC2)c3C1=O
 NCN(C=C1)c(cccc2)c2C1=O
 NCc(cccc1)c1F
 Nc1cccc(N(C(C=C2)=O)NC2=O)c1
-OS(c(cc1)cc(C(N2)=O)c1NC2=O)(=O)=O
 NC(c(cc1)cnc1N)=O
 Nc(cc1C(N2)=O)cnc1N(Cc1ccccc1)C2=O
 Cc(cc1nc2)n[n]1c(C)c2N
@@ -476,7 +473,6 @@ Cc1cc(N)nc(N=C(N2)O)c1C2=O
 COc(cc(CN)cc1)c1O
 Nc(cc1)cc2c1[o]cc2
 Nc1cccc(N(CCCN2)C2=O)c1
-C[n]1c(C(N)=O)cc(S(O)(=O)=O)c1
 NCN(C=CC(N1)=O)C1=O
 Nc1n[nH]c(C2CC2)c1
 CC(N=C(c1ccncc1)N1)=C(CN)C1=O
