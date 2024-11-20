@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from rdkit import Chem
 from rdkit.Chem import AllChem, rdMolAlign, rdDistGeom
-from espsim import GetEspSim, GetShapeSim
+from electrostatics import GetEspSim, GetShapeSim
 import py3Dmol
 import tqdm
 import secrets
