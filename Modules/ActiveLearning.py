@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from Reactions import *
-from ESPsim import*
+from Modules.Reactions import *
+from Modules.ESPsim import*
 
 from rdkit.Chem import AllChem
 from tqdm import tqdm
