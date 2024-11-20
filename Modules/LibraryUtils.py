@@ -125,3 +125,36 @@ def library_df_from_bb_pools(poolA, poolB, poolC):
     merge_columns(library_df, ['bbA_SMILES', 'bbB_SMILES', 'bbC_SMILES'], 'union_SMILES')
 
     return library_df
+
+def plot_bb_histogram(
+    df: pd.DataFrame, 
+    bbID_col: str, 
+    sorting_col: str, 
+    n_samples: int, 
+    ascending_mode: bool = False
+):
+    """
+    Plots a bar chart for the count distribution of a specified column in the top n building blocks
+    of the DataFrame, sorted by another column.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame.
+        bbID_col (str): The column to analyze and count values from.
+        sorting_col (str): The column to sort the DataFrame by.
+        n_samples (int): The number of rows to include in the plot.
+        ascending_mode (bool): Whether to sort the DataFrame in ascending order. Default is False.
+    """
+    # Sort the DataFrame and select the top n_samples
+    sorted_df = df.sort_values(by=sorting_col, ascending=ascending_mode)
+    plot_df = sorted_df.head(n_samples)
+
+    # Plot the histogram for the selected column
+    plot_df[bbID_col].value_counts().plot(kind='bar', figsize=(10, 6), color='skyblue')
+
+    # Customize the plot
+    plt.title(f'Count Distribution for {bbID_col} (Top {n_samples} samples)', fontsize=14)
+    plt.xlabel('Category', fontsize=12)
+    plt.ylabel('Frequency', fontsize=12)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
