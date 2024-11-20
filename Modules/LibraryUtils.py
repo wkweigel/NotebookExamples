@@ -1,5 +1,6 @@
 import pandas as pd
 from itertools import product
+import matplotlib.pyplot as plt
 
 def get_bb_dict_from_smiles(pool_id: str, smiles: list) -> dict:
     """
