@@ -9,7 +9,7 @@ from tqdm import tqdm
 import numpy as np
 import pandas as pd
 from rdkit import Chem
-from rdkit.Chem import AllChem
+from rdkit.Chem import AllChem, PandasTools
 from sklearn.ensemble import RandomForestRegressor
 from scipy.stats import spearmanr
 from sklearn.metrics import mean_absolute_error
