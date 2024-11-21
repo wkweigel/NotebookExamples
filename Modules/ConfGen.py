@@ -240,7 +240,7 @@ def display_multiple_pharm3D(df, mol_col:str, featLists:list, width=1000, height
             for feat in featLists[mol_position_on_df]:
                 pos = feat.GetPos()
                 clr = featColors.get(feat.GetFamily(),(.5,.5,.5))
-                p.addSphere({'center':{'x':pos.x,'y':pos.y,'z':pos.z},'radius':.5,'color':colorToHex(clr)});
+                view.addSphere({'center':{'x':pos.x,'y':pos.y,'z':pos.z},'radius':.5,'color':colorToHex(clr)});
             
             # Set styles for the viewer
             view.setStyle({'stick': {}}, viewer=(i, j))
