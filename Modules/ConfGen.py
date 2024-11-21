@@ -207,13 +207,14 @@ def drawfeatsonly(m, feats, p=None, confId=-1, removeHs=True):
         p.zoomTo()
         return p.show()
 
-def display_multiple_3D(df, mol_col:str, width=1000, height=2000, grid_size=(6, 3)):
+def display_multiple_pharm3D(df, mol_col:str, featLists:list, width=1000, height=2000, grid_size=(6, 3)):
     """
     Draws the superimposed 3D structures of a probe molecule and a reference molecule using py3Dmol.
 
     Parameters:
         df (DataFrame): DataFrame containing probe molecules. Assumes a column 'conformer_mol' with RDKit Mol objects.
         mol_col (str): The name of a mol column containing 3D conformers.
+        featLists (list): A list the pharmacophore features for the mols in the dataframe.
         width (int): Width of the py3Dmol viewer.
         height (int): Height of the py3Dmol viewer.
         grid_size (tuple): Grid size for displaying molecules.
@@ -235,6 +236,11 @@ def display_multiple_3D(df, mol_col:str, width=1000, height=2000, grid_size=(6, 
 
             # Add the mol to the viewer
             view.addModel(Chem.MolToMolBlock(Mol), 'mol', viewer=(i, j))
+            #IPythonConsole.addMolToView(m,p,confId=confId)
+            for feat in featLists[mol_position_on_df]:
+                pos = feat.GetPos()
+                clr = featColors.get(feat.GetFamily(),(.5,.5,.5))
+                p.addSphere({'center':{'x':pos.x,'y':pos.y,'z':pos.z},'radius':.5,'color':colorToHex(clr)});
             
             # Set styles for the viewer
             view.setStyle({'stick': {}}, viewer=(i, j))
