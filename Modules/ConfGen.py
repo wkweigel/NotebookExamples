@@ -205,3 +205,39 @@ def drawfeatsonly(m, feats, p=None, confId=-1, removeHs=True):
             p.addSphere({'center':{'x':pos.x,'y':pos.y,'z':pos.z},'radius':.5,'color':colorToHex(clr)});
         p.zoomTo()
         return p.show()
+
+def display_multiple_3D(df, mol_col:str, width=1000, height=2000, grid_size=(6, 3)):
+    """
+    Draws the superimposed 3D structures of a probe molecule and a reference molecule using py3Dmol.
+
+    Parameters:
+        df (DataFrame): DataFrame containing probe molecules. Assumes a column 'conformer_mol' with RDKit Mol objects.
+        mol_col (str): The name of a mol column containing 3D conformers.
+        width (int): Width of the py3Dmol viewer.
+        height (int): Height of the py3Dmol viewer.
+        grid_size (tuple): Grid size for displaying molecules.
+
+    Returns:
+        py3Dmol.view: The py3Dmol viewer with the superimposed molecules displayed.
+    """
+    view = py3Dmol.view(width=width, height=height, linked=False, viewergrid=grid_size)
+    for i in range(grid_size[0]):
+        for j in range(grid_size[1]):
+            mol_position_on_df = i * grid_size[1] + j
+
+            # Check if the index is within the bounds of the DataFrame
+            if mol_position_on_df >= len(df):
+                continue
+
+            # Extract the conformer molecule
+            Mol = deepcopy(df.iloc[mol_position_on_df]['conformer_mol'])
+
+            # Add the mol to the viewer
+            view.addModel(Chem.MolToMolBlock(Mol), 'mol', viewer=(i, j))
+            
+            # Set styles for the viewer
+            view.setStyle({'stick': {}}, viewer=(i, j))
+            view.setStyle({'model': 0}, {'stick': {'colorscheme': 'greenCarbon'}}, viewer=(i, j))
+
+    view.zoomTo()
+    return view.render()
