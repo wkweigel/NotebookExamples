@@ -207,7 +207,7 @@ def drawfeatsonly(m, feats, p=None, confId=-1, removeHs=True):
         p.zoomTo()
         return p.show()
 
-def display_multiple_pharm3D(df, mol_col:str, featLists:list, width=1000, height=2000, grid_size=(6, 3)):
+def display_multiple_pharm3D(df, mol_col:str, featLists:list, width=1000, height=2000, grid_size=(6, 3), feats_only:bool = False):
     """
     Draws the superimposed 3D structures of a probe molecule and a reference molecule using py3Dmol.
 
@@ -235,18 +235,19 @@ def display_multiple_pharm3D(df, mol_col:str, featLists:list, width=1000, height
             # Extract the conformer molecule
             Mol = deepcopy(df.iloc[mol_position_on_df][mol_col])
 
-            # Add the mol to the viewer
-            view.addModel(Chem.MolToMolBlock(Mol), 'mol', viewer=(i, j))
-
             #Add the pharmocophore feats to the viewer  
             for feat in featLists[mol_position_on_df]:
                 pos = feat.GetPos()
                 clr = featColors.get(feat.GetFamily(),(.5,.5,.5))
                 view.addSphere({'center':{'x':pos.x,'y':pos.y,'z':pos.z},'radius':.5,'color':colorToHex(clr)}, viewer=(i, j));
-            
-            # Set styles for the viewer
-            view.setStyle({'stick': {}}, viewer=(i, j))
-            view.setStyle({'model': 0}, {'stick': {'colorscheme': 'greyCarbon'}}, viewer=(i, j))
+
+            #Add the molecule to the viewer if feats_only is False
+            if feats_only == False:
+                view.addModel(Chem.MolToMolBlock(Mol), 'mol', viewer=(i, j))
+                # Set styles for the viewer
+                view.setStyle({'stick': {}}, viewer=(i, j))
+                view.setStyle({'model': 0}, {'stick': {'colorscheme': 'greyCarbon'}}, viewer=(i, j))
 
     view.zoomTo()
     return view.render()
+
