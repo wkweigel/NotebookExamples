@@ -1,5 +1,6 @@
 # Standard library imports
 import os
+from copy import deepcopy
 
 # Data manipulation and analysis
 import pandas as pd
@@ -230,7 +231,7 @@ def display_multiple_3D(df, mol_col:str, width=1000, height=2000, grid_size=(6, 
                 continue
 
             # Extract the conformer molecule
-            Mol = deepcopy(df.iloc[mol_position_on_df]['conformer_mol'])
+            Mol = deepcopy(df.iloc[mol_position_on_df][mol_col])
 
             # Add the mol to the viewer
             view.addModel(Chem.MolToMolBlock(Mol), 'mol', viewer=(i, j))
