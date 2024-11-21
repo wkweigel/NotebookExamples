@@ -223,6 +223,7 @@ def display_multiple_pharm3D(df, mol_col:str, featLists:list, width=1000, height
         py3Dmol.view: The py3Dmol viewer with the superimposed molecules displayed.
     """
     view = py3Dmol.view(width=width, height=height, linked=False, viewergrid=grid_size)
+    view.removeAllModels()
     for i in range(grid_size[0]):
         for j in range(grid_size[1]):
             mol_position_on_df = i * grid_size[1] + j
@@ -236,15 +237,16 @@ def display_multiple_pharm3D(df, mol_col:str, featLists:list, width=1000, height
 
             # Add the mol to the viewer
             view.addModel(Chem.MolToMolBlock(Mol), 'mol', viewer=(i, j))
-            #IPythonConsole.addMolToView(m,p,confId=confId)
+
+            #Add the pharmocophore feats to the viewer  
             for feat in featLists[mol_position_on_df]:
                 pos = feat.GetPos()
                 clr = featColors.get(feat.GetFamily(),(.5,.5,.5))
-                view.addSphere({'center':{'x':pos.x,'y':pos.y,'z':pos.z},'radius':.5,'color':colorToHex(clr)});
+                view.addSphere({'center':{'x':pos.x,'y':pos.y,'z':pos.z},'radius':.5,'color':colorToHex(clr)}, viewer=(i, j));
             
             # Set styles for the viewer
             view.setStyle({'stick': {}}, viewer=(i, j))
-            view.setStyle({'model': 0}, {'stick': {'colorscheme': 'greenCarbon'}}, viewer=(i, j))
+            view.setStyle({'model': 0}, {'stick': {'colorscheme': 'greyCarbon'}}, viewer=(i, j))
 
     view.zoomTo()
     return view.render()
